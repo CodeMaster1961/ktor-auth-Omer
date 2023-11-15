@@ -5,6 +5,7 @@ import org.mindrot.jbcrypt.*
 class UserModel(var firstName: String, var lastName: String, var email: String, private val password: String) {
 
 
+
     /**
      * @author Ömer Aynaci
      * @return String
@@ -19,8 +20,8 @@ class UserModel(var firstName: String, var lastName: String, var email: String, 
      * @return Boolean
      * validating input fields
      */
-    fun isLengthValid(inputField: String, minLength: Int, maxLength: Int): Boolean {
-        return inputField.length in minLength..maxLength
+    fun isLengthValid(inputField: String): Boolean {
+        return inputField.length in 5..15
     }
 
     /**
