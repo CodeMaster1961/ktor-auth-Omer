@@ -13,6 +13,4 @@ fun Application.configureDatabases() {
         driver = "org.h2.Driver",
         password = ""
     )
-    routing {
-    }
 }

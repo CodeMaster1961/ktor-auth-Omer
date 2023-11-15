@@ -11,6 +11,4 @@ fun Application.configureSecurity() {
             cookie.extensions["SameSite"] = "lax"
         }
     }
-    routing {
-    }
 }
