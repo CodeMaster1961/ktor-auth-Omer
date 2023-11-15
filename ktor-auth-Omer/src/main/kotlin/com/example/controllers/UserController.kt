@@ -13,7 +13,7 @@ class UserController(private val userService: UserService) {
             userService.createUser(user)
             response.status(HttpStatusCode(201, "User has been successfully created"))
         } catch (error: IllegalArgumentException) {
-            response.status(HttpStatusCode(400, "Invalid user data ${error.message}"))
+            response.status(HttpStatusCode(400, "Invalid user data: ${error.message}"))
         }
     }
 }
