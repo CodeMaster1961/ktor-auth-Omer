@@ -33,6 +33,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
+    implementation("com.mysql:mysql-connector-j:8.2.0")
     implementation("com.h2database:h2:$h2_version")
     implementation("io.ktor:ktor-server-html-builder-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
