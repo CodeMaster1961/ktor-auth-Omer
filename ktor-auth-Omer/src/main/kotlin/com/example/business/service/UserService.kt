@@ -5,9 +5,16 @@ import com.example.data.models.*
 import com.example.data.repositories.*
 import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.*
 
 class UserService : UserRepository {
+    private fun resultToRowUser(row: ResultRow) = User(
+        firstName = row[Users.firstName],
+        lastName = row[Users.lastName],
+        email = row[Users.email],
+        password = row[Users.password]
+    )
 
     suspend fun <T> databaseQuery(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
@@ -37,7 +44,6 @@ class UserService : UserRepository {
     override suspend fun createUser(user: User): Unit = databaseQuery {
         val userModel = UserModel(user.firstName, user.lastName, user.email, user.password)
         if (validateInputFields(user)) {
-
             Users.insert {
                 it[firstName] = user.firstName
                 it[lastName] = user.lastName
@@ -47,15 +53,47 @@ class UserService : UserRepository {
         }
     }
 
-    override suspend fun getUsers(): List<User> {
-        TODO("Not yet implemented")
+    /**
+     * @author Ömer Aynaci
+     * @param user
+     * @return a list of users
+     * if a user doesn't exist it throws an error otherwise gets all users
+     */
+    override suspend fun getUsers(user: User): List<User> {
+        if (user.toString().isEmpty()) {
+            throw IllegalArgumentException("No users found")
+        } else {
+            return Users.selectAll().map(::resultToRowUser)
+        }
     }
 
+    /**
+     * @author Ömer Aynaci
+     * @param id
+     * @return User?
+     * if an id is null then it throws an error otherwise it gets the user by the given id
+     */
     override suspend fun getUserById(id: Int): User? {
-        TODO("Not yet implemented")
+        if (id.equals(null)) {
+            throw IllegalArgumentException("No user found with the given id: $id")
+        } else {
+            return Users.select { Users.userId eq id }
+                .map(::resultToRowUser)
+                .singleOrNull()
+        }
     }
 
+    /**
+     * @author Ömer Aynaci
+     * @param id
+     * @return Boolean
+     * if an id is null then it throws an error otherwise it deletes the user by their id.
+     */
     override suspend fun deleteUser(id: Int): Boolean {
-        TODO("Not yet implemented")
+        if (id == 0) {
+            throw IllegalArgumentException("No user found with the given id: $id")
+        } else {
+            return Users.deleteWhere { Users.userId eq id } > 0
+        }
     }
 }
