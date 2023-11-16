@@ -12,7 +12,13 @@ class UserService : UserRepository {
     suspend fun <T> databaseQuery(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
 
-    override suspend fun createUser(user: User): Unit = databaseQuery {
+    /**
+     * @author Ömer Aynaci
+     * @param user
+     * @return Boolean
+     * validating required inputs
+     */
+    private fun validateInputFields(user: User): Boolean {
         val userModel = UserModel(user.firstName, user.lastName, user.email, user.password)
         if (!userModel.isLengthValid(user.firstName) || !userModel.isLengthValid(user.lastName) || !userModel.isEmailValid(
                 user.email
@@ -20,6 +26,18 @@ class UserService : UserRepository {
         ) {
             throw IllegalArgumentException("Invalid credentials")
         } else {
+            return true
+        }
+    }
+
+    /**
+     * @author Ömer Aynaci
+     * creating a user
+     */
+    override suspend fun createUser(user: User): Unit = databaseQuery {
+        val userModel = UserModel(user.firstName, user.lastName, user.email, user.password)
+        if (validateInputFields(user)) {
+
             Users.insert {
                 it[firstName] = user.firstName
                 it[lastName] = user.lastName

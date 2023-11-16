@@ -8,6 +8,10 @@ import io.ktor.server.routing.*
 
 class UserRoutes(private val userController: UserController) {
 
+    /**
+     * @author Ömer Aynaci
+     * creating user at the endpoint /users
+     */
     fun createUser(routing: Routing) {
         routing {
             post("/users") {
