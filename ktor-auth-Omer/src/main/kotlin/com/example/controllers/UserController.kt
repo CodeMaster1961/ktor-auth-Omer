@@ -18,10 +18,11 @@ class UserController(private val userService: UserService) {
     suspend fun createUser(user: User, request: ApplicationRequest, response: ApplicationResponse) {
         try {
             val users = userService.createUser(user)
-            response.status(HttpStatusCode(201, "User has been successfully created"))
+            request.call.respondText("User has been successfully created", status = HttpStatusCode.Created)
             request.call.respond(users)
         } catch (error: IllegalArgumentException) {
             response.status(HttpStatusCode(400, "Invalid user data: ${error.message}"))
+            request.call.respondText("Invalid user data: ${error.message}", status = HttpStatusCode.BadRequest)
         }
     }
 
@@ -54,6 +55,24 @@ class UserController(private val userService: UserService) {
             request.call.respond(users!!)
         } catch (error: IllegalArgumentException) {
             response.status(HttpStatusCode(400, "User $id doesn't exists"))
+        }
+    }
+
+
+    /**
+     * @author Ömer Aynaci
+     * @param id the id that belongs to the user
+     * @param request sending the request
+     * @param response giving status code and message
+     */
+    suspend fun deleteUser(id: Int, request: ApplicationRequest, response: ApplicationResponse) {
+        try {
+            val users = userService.deleteUser(id)
+            request.call.respondText("User successfully deleted", status = HttpStatusCode.NoContent)
+            request.call.respond(users)
+        } catch (error: IllegalArgumentException) {
+            response.status(HttpStatusCode(400, "User not found"))
+            request.call.respondText("User not found", status = HttpStatusCode.BadRequest)
         }
     }
 }

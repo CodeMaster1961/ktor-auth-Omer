@@ -17,5 +17,6 @@ fun Application.configureRouting() {
         UserRoutes(userController).createUser(this)
         UserRoutes(userController).getAllUsers(this)
         UserRoutes(userController).getUserById(this)
+        UserRoutes(userController).deleteUser(this)
     }
 }
