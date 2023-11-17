@@ -59,11 +59,12 @@ class UserService : UserRepository {
      * @return a list of users
      * if a user doesn't exist it throws an error otherwise gets all users
      */
-    override suspend fun getUsers(user: User): List<User> {
-        if (user.toString().isEmpty()) {
-            throw IllegalArgumentException("No users found")
+    override suspend fun getUsers(): List<User> = databaseQuery {
+        val userList = Users.selectAll().map(::resultToRowUser)
+        if (userList.isNotEmpty()) {
+            Users.selectAll().map(::resultToRowUser)
         } else {
-            return Users.selectAll().map(::resultToRowUser)
+            throw IllegalArgumentException("User doesn't exists")
         }
     }
 
@@ -73,11 +74,12 @@ class UserService : UserRepository {
      * @return User?
      * if an id is null then it throws an error otherwise it gets the user by the given id
      */
-    override suspend fun getUserById(id: Int): User? {
-        if (id.equals(null)) {
+    override suspend fun getUserById(id: Int): User? = databaseQuery {
+        val existingUser = Users.select { Users.userId eq id }
+        if (existingUser.empty()) {
             throw IllegalArgumentException("No user found with the given id: $id")
         } else {
-            return Users.select { Users.userId eq id }
+            Users.select { Users.userId eq id }
                 .map(::resultToRowUser)
                 .singleOrNull()
         }
@@ -89,11 +91,12 @@ class UserService : UserRepository {
      * @return Boolean
      * if an id is null then it throws an error otherwise it deletes the user by their id.
      */
-    override suspend fun deleteUser(id: Int): Boolean {
-        if (id == 0) {
+    override suspend fun deleteUser(id: Int): Boolean = databaseQuery {
+        val existingUser = Users.select { Users.userId eq id }
+        if (existingUser.empty()) {
             throw IllegalArgumentException("No user found with the given id: $id")
         } else {
-            return Users.deleteWhere { Users.userId eq id } > 0
+            Users.deleteWhere { Users.userId eq id } > 0
         }
     }
 }
