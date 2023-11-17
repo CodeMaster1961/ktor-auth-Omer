@@ -1,9 +1,10 @@
 package com.example.business.models
 
+import kotlinx.serialization.Serializable
 import org.mindrot.jbcrypt.*
 
-class UserModel(var firstName: String, var lastName: String, var email: String, private val password: String) {
-
+@Serializable
+data class UserModel(var firstName: String, var lastName: String, var email: String, private val password: String) {
 
 
     /**
@@ -15,6 +16,14 @@ class UserModel(var firstName: String, var lastName: String, var email: String, 
         return BCrypt.hashpw(password, BCrypt.gensalt())
     }
 
+    /**
+     * @author Ömer Aynaci
+     * @return String
+     * returns the password
+     */
+    fun getPassword(): String {
+        return password
+    }
     /**
      * @author Ömer Aynaci
      * @return Boolean

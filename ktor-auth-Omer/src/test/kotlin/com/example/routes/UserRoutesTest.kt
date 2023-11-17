@@ -8,7 +8,7 @@ import kotlin.test.*
 
 class UserRoutesTest {
     @Test
-    fun testCreateUserEndpoint() = testApplication {
+    fun test_Create_User_When_Valid_Credentials_Endpoint() = testApplication {
         val response = client.post("/users") {
             header(HttpHeaders.ContentType, ContentType.Application.Json)
             setBody(

@@ -1,5 +1,6 @@
 package com.example.controllers
 
+import com.example.business.models.*
 import com.example.business.service.*
 import com.example.data.models.*
 import io.ktor.http.*
@@ -15,7 +16,7 @@ class UserController(private val userService: UserService) {
      * @param response giving status code and message
      * controller for creating user with responses
      */
-    suspend fun createUser(user: User, request: ApplicationRequest, response: ApplicationResponse) {
+    suspend fun createUser(user: UserModel, request: ApplicationRequest, response: ApplicationResponse) {
         try {
             val users = userService.createUser(user)
             request.call.respondText("User has been successfully created", status = HttpStatusCode.Created)

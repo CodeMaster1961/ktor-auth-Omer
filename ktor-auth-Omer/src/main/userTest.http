@@ -3,6 +3,10 @@ Content-Type: application/json
 
 ###
 
+GET http://localhost:8080/users/13
+Content-Type: application/json
+
+###
 DELETE http://localhost:8080/users/12
 Content-Type: application/json
 
@@ -11,7 +15,7 @@ POST http://localhost:8080/users
 Content-Type: application/json
 
 {
-  "firstName": "Jas",
+  "firstName": "ss",
   "lastName": "Schipper",
   "email": "jaapschipper22@hotmail.com",
   "password": "Jaapschipper22@"

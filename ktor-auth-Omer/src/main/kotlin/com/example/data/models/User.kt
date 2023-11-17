@@ -1,16 +1,8 @@
 package com.example.data.models
 
-import kotlinx.serialization.Serializable
+
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNotNull
 
-
-/**
- * @author Ömer Aynaci
- * holding the data about a user
- */
-@Serializable
-data class User(val firstName: String, val lastName: String, val email: String, val password: String)
 
 /**
  * @author Ömer Aynaci

@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.*
 
 class UserService : UserRepository {
-    private fun resultToRowUser(row: ResultRow) = User(
+    private fun resultToRowUser(row: ResultRow) = UserModel(
         firstName = row[Users.firstName],
         lastName = row[Users.lastName],
         email = row[Users.email],
@@ -25,11 +25,11 @@ class UserService : UserRepository {
      * @return Boolean
      * validating required inputs
      */
-    private fun validateInputFields(user: User): Boolean {
-        val userModel = UserModel(user.firstName, user.lastName, user.email, user.password)
+    private fun validateInputFields(user: UserModel): Boolean {
+        val userModel = UserModel(user.firstName, user.lastName, user.email, user.getPassword())
         if (!userModel.isLengthValid(user.firstName) || !userModel.isLengthValid(user.lastName) || !userModel.isEmailValid(
                 user.email
-            ) || !userModel.isPasswordValid(user.password)
+            ) || !userModel.isPasswordValid(user.getPassword())
         ) {
             throw IllegalArgumentException("Invalid credentials")
         } else {
@@ -41,9 +41,9 @@ class UserService : UserRepository {
      * @author Ömer Aynaci
      * creating a user
      */
-    override suspend fun createUser(user: User): Unit = databaseQuery {
-        val userModel = UserModel(user.firstName, user.lastName, user.email, user.password)
-        if (validateInputFields(user)) {
+    override suspend fun createUser(user: UserModel): Unit = databaseQuery {
+        val userModel = UserModel(user.firstName, user.lastName, user.email, user.getPassword())
+        if (validateInputFields(userModel)) {
             Users.insert {
                 it[firstName] = user.firstName
                 it[lastName] = user.lastName
@@ -59,7 +59,7 @@ class UserService : UserRepository {
      * @return a list of users
      * if a user doesn't exist it throws an error otherwise gets all users
      */
-    override suspend fun getUsers(): List<User> = databaseQuery {
+    override suspend fun getUsers(): List<UserModel> = databaseQuery {
         val userList = Users.selectAll().map(::resultToRowUser)
         if (userList.isNotEmpty()) {
             Users.selectAll().map(::resultToRowUser)
@@ -74,7 +74,7 @@ class UserService : UserRepository {
      * @return User?
      * if an id is null then it throws an error otherwise it gets the user by the given id
      */
-    override suspend fun getUserById(id: Int): User? = databaseQuery {
+    override suspend fun getUserById(id: Int): UserModel? = databaseQuery {
         val existingUser = Users.select { Users.userId eq id }
         if (existingUser.empty()) {
             throw IllegalArgumentException("No user found with the given id: $id")
